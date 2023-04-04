@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Piece : MonoBehaviour
 {
@@ -24,5 +26,50 @@ public class Piece : MonoBehaviour
         {
             this.cells[i] = (Vector3Int)data.cells[i];
         }
+    }
+
+    private void Update()
+    {
+        this.board.Clear(this);
+
+        if (Input.GetKeyDown(KeyCode.A)) // move left right
+        {
+            Move(Vector2Int.left);
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            Move(Vector2Int.right);
+        }
+
+        if (Input.GetKeyDown(KeyCode.S)) // move down
+        {
+            Move(Vector2Int.down);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space)) // hard drop
+        {
+            while (Move(Vector2Int.down))
+            {
+                continue;
+            }
+        }
+
+        this.board.Set(this);
+    }
+
+    private bool Move(Vector2Int translation)
+    {
+        Vector3Int newPosition = this.position;
+        newPosition.x += translation.x;
+        newPosition.y += translation.y;
+
+        bool valid = this.board.IsValidPosition(this, newPosition);
+
+        if (valid)
+        {
+            this.position = newPosition;
+        }
+
+        return valid;
     }
 }
